@@ -182,12 +182,13 @@ int main(int argc, char *argv[]){
     	gettimeofday( &stop, (struct timezone *)0);
 
     	time1 = (double)(stop.tv_sec - start.tv_sec) + (double)((stop.tv_usec - start.tv_usec)) * 1.e-6;
-
-	timeg += time1;
+	
+	if(l!=0)
+		timeg += time1;
 
     }
 
-    timeg /= loops;
+    timeg /= (loops-1);
 
     fprintf(stderr,
 	    " %10.2f MFlops %10.6f sec\n",
