@@ -95,6 +95,7 @@ static void *huge_malloc(BLASLONG size){
 		     (size + HUGE_PAGESIZE) & ~(HUGE_PAGESIZE - 1),
 		     SHM_HUGETLB | IPC_CREAT |0600)) < 0) {
     printf( "Memory allocation failed(shmget).\n");
+    fprintf( "Memory allocation failed(shmget).\n");
     exit(1);
   }
 
@@ -102,6 +103,7 @@ static void *huge_malloc(BLASLONG size){
 
   if ((BLASLONG)address == -1){
     printf( "Memory allocation failed(shmat).\n");
+    fprintf( "Memory allocation failed(shmat).\n");
     exit(1);
   }
 
@@ -141,7 +143,7 @@ int main(int argc, char *argv[]){
   if ((p = getenv("OPENBLAS_INCX")))   inc_x = atoi(p);
   if ((p = getenv("OPENBLAS_INCY")))   inc_y = atoi(p);
 
-  printf(stderr, "From : %3d  To : %3d Step = %3d Inc_x = %d Inc_y = %d Loops = %d\n", from, to, step,inc_x,inc_y,loops);
+  fprintf(stderr, "From : %3d  To : %3d Step = %3d Inc_x = %d Inc_y = %d Loops = %d\n", from, to, step,inc_x,inc_y,loops);
 
   if (( x = (FLOAT *)malloc(sizeof(FLOAT) * to * abs(inc_x) * COMPSIZE)) == NULL){
     printf(stderr,"Out of Memory!!\n");exit(1);
@@ -155,14 +157,18 @@ int main(int argc, char *argv[]){
   srandom(getpid());
 #endif
 
-  printf(stderr, "   SIZE       Flops\n");
+  fprintf(stderr, "   SIZE       Flops\n");
 
   for(m = from; m <= to; m += step)
   {
 
    timeg=0;
-
-   printf(stderr, " %6d : ", (int)m);
+   const char* env_p = getenv("OMP_NUM_THREADS");
+   if(env_p){
+       printf("%s,%6d,", env_p, (int)m);
+   }else
+       printf("%6d,", (int)m);
+   fprintf(stderr, " %6d : ", (int)m);
 
 
    for (l=0; l<loops; l++)
@@ -190,12 +196,13 @@ int main(int argc, char *argv[]){
 
     timeg /= (loops-1);
 
-    printf(stderr,
+    printf("%10.2f\n",
+	    COMPSIZE * COMPSIZE * 2. * (double)m / timeg * 1.e-6);
+    fprintf(stderr,
 	    " %10.2f MFlops %10.6f sec\n",
 	    COMPSIZE * COMPSIZE * 2. * (double)m / timeg * 1.e-6, timeg);
 
   }
-
   return 0;
 }
 
