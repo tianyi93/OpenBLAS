@@ -141,28 +141,28 @@ int main(int argc, char *argv[]){
   if ((p = getenv("OPENBLAS_INCX")))   inc_x = atoi(p);
   if ((p = getenv("OPENBLAS_INCY")))   inc_y = atoi(p);
 
-  fprintf(stderr, "From : %3d  To : %3d Step = %3d Inc_x = %d Inc_y = %d Loops = %d\n", from, to, step,inc_x,inc_y,loops);
+  printf(stderr, "From : %3d  To : %3d Step = %3d Inc_x = %d Inc_y = %d Loops = %d\n", from, to, step,inc_x,inc_y,loops);
 
   if (( x = (FLOAT *)malloc(sizeof(FLOAT) * to * abs(inc_x) * COMPSIZE)) == NULL){
-    fprintf(stderr,"Out of Memory!!\n");exit(1);
+    printf(stderr,"Out of Memory!!\n");exit(1);
   }
 
   if (( y = (FLOAT *)malloc(sizeof(FLOAT) * to * abs(inc_y) * COMPSIZE)) == NULL){
-    fprintf(stderr,"Out of Memory!!\n");exit(1);
+    printf(stderr,"Out of Memory!!\n");exit(1);
   }
 
 #ifdef linux
   srandom(getpid());
 #endif
 
-  fprintf(stderr, "   SIZE       Flops\n");
+  printf(stderr, "   SIZE       Flops\n");
 
   for(m = from; m <= to; m += step)
   {
 
    timeg=0;
 
-   fprintf(stderr, " %6d : ", (int)m);
+   printf(stderr, " %6d : ", (int)m);
 
 
    for (l=0; l<loops; l++)
@@ -190,7 +190,7 @@ int main(int argc, char *argv[]){
 
     timeg /= (loops-1);
 
-    fprintf(stderr,
+    printf(stderr,
 	    " %10.2f MFlops %10.6f sec\n",
 	    COMPSIZE * COMPSIZE * 2. * (double)m / timeg * 1.e-6, timeg);
 
